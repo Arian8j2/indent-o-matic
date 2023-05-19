@@ -120,6 +120,14 @@ local function get_is_multiline_function()
     end
 end
 
+-- Set indent width
+local function set_indent_width(size)
+    setopt('expandtab', true)
+    setopt('tabstop', size)
+    setopt('softtabstop', size)
+    setopt('shiftwidth', size)
+end
+
 -- Configure the plugin
 function M.setup(options)
     if type(options) == 'table' then
@@ -140,6 +148,7 @@ function M.detect()
     local max_lines = config('max_lines', 2048)
     local standard_widths = config('standard_widths', { 2, 4, 8 })
     local skip_multiline = config('skip_multiline', true)
+    local forced_default_width = config('forced_default_width', nil)
 
     -- Figure out the maximum space indentation possible
     table.sort(standard_widths)
@@ -221,11 +230,10 @@ function M.detect()
         if detected == 0 then
             setopt('expandtab', false)
         else
-            setopt('expandtab', true)
-            setopt('tabstop', detected)
-            setopt('softtabstop', detected)
-            setopt('shiftwidth', detected)
+            set_indent_width(detected)
         end
+    elseif forced_default_width ~= nil then
+        set_indent_width(forced_default_width)
     end
 end
 
