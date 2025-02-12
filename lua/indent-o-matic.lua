@@ -150,11 +150,7 @@ function M.detect()
     local skip_multiline = config('skip_multiline', true)
     local default_width = config('default_width', nil)
     local forced_width = config('forced_width', nil)
-
-    if forced_width ~= nil then
-        set_indent_width(forced_width)
-        return
-    end
+    local after_indent_callback = config('after_indent_callback', nil)
 
     -- Figure out the maximum space indentation possible
     table.sort(standard_widths)
@@ -232,14 +228,22 @@ function M.detect()
         i = i + 1
     end
 
-    if detected ~= default then
-        if detected == 0 then
-            setopt('expandtab', false)
-        else
-            set_indent_width(detected)
+    if forced_width ~= nil then
+        set_indent_width(forced_width)
+    else
+        if detected ~= default then
+            if detected == 0 then
+                setopt('expandtab', false)
+            else
+                set_indent_width(detected)
+            end
+        elseif default_width ~= nil then
+            set_indent_width(default_width)
         end
-    elseif default_width ~= nil then
-        set_indent_width(default_width)
+    end
+
+    if after_indent_callback ~= nil then
+        after_indent_callback()
     end
 end
 
