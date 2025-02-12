@@ -149,6 +149,12 @@ function M.detect()
     local standard_widths = config('standard_widths', { 2, 4, 8 })
     local skip_multiline = config('skip_multiline', true)
     local default_width = config('default_width', nil)
+    local forced_width = config('forced_width', nil)
+
+    if forced_width ~= nil then
+        set_indent_width(forced_width)
+        return
+    end
 
     -- Figure out the maximum space indentation possible
     table.sort(standard_widths)
